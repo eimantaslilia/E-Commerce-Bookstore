@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+    <div class="row">
+        <div class="mx-auto">
+
+            <h2 style="text-align:center"><strong>Most Popular</strong></h2>
+            <hr>
+            <div class="card-deck">
+                <div th:each="book : ${bookPage}">
+
+                    <div class="card mainPageCard border-light" style="width:195px; height:auto; border:none;">
+                        <a th:href="@{/books/bookInfo(bookId=${book.id})}"> <img style="height:300px;"
+                                                                                 class=" mainPageImage card-img-top img-responsive"
+                                                                                 th:src="${book.imagePath}"
+                        ></a>
+                        <div class="card-body">
+                            <a th:href="@{/books/bookInfo(bookId=${book.id})}"><h5 th:text="${book.title}"
+                                                                                   style="text-align:center;"></h5></a>
+                            <p th:text="${book.author}" style="text-align:center;"></p>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <hr>
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li th:if="${bookPage.totalPages > 0}" class="page-item" th:each="pageNumber : ${pageNumbers}">
+
+                        <div class="pageLink">
+                            <a th:href="@{/(size=${bookPage.size}, page=${pageNumber})}" th:text=${pageNumber}
+                               th:class="${pageNumber==bookPage.number + 1} ? active"
+                               style="font-size:25px; margin-right:5px;"></a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: footer"></div>
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+
+</body>
+
+
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-xl-9 col-lg-8">
+            <table class="table table-bordered table-hover">
+                <div th:if="${basketItemList.isEmpty()}" style="text-align:center;">
+                    <h5>Your Shopping Cart is empty.</h5>
+                    <br>
+                    <h6><a th:href="@{/}">View</a> all of our books and maybe something will catch your eye.</h6>
+                    <h6>Otherwise, consider <a th:href="@{/browse}">browsing</a> through our selection by genre.</h6>
+                    <h6>Also, feel free to use the search bar to look for books by your favourite authors, or by title
+                        itself!</h6>
+                </div>
+
+                <thead>
+
+                <div th:if="${!basketItemList.isEmpty()}" style="text-align:center;">
+                    <th style="text-align:center;"><h3><strong>Shopping Cart</strong></h3>
+                </div>
+
+                <div th:if="${successAdded}">
+                    <span style="color:forestgreen;" th:text="${successAdded}"></span>
+                </div>
+                <div th:if="${successDeleted}" style="text-align:center;">
+                    <div th:if="${!basketItemList.isEmpty()}" style="text-align:center;">
+                        <span style="color:mediumvioletred;" th:text="${successDeleted}"></span>
+                    </div>
+                </div>
+
+                </th>
+                </thead>
+                <tbody>
+
+                <tr th:each="basketItem : ${basketItemList}">
+                    <td>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <a th:href="@{/books/bookInfo(bookId=${basketItem.book.id})}"> <img
+                                        class="card-img-top img-thumbnail img-responsive"
+                                        th:src="${basketItem.book.imagePath}"
+                                        style="height:auto; max-width:100%;"></a>
+                            </div>
+                            <div class="col-md-7">
+                                <h4><strong><a th:href="@{/books/bookInfo(bookId=${basketItem.book.id})}"><span
+                                        th:text="${basketItem.book.title}"></span></a></strong></h4>
+                                <h6>by <span th:text="${basketItem.book.author}"></span></h6>
+
+                                <span style="color:indianred"><strong>$<span
+                                        th:text="${basketItem.book.ourPrice}"></span></strong></span>
+                                <span style="font-size:13px; color:lightcoral;"><strong>RRP: $<span
+                                        th:text="${basketItem.book.boughtPrice}"
+                                        style="text-decoration: line-through"></span></strong></span>
+
+                            </div>
+                            <div class="col-md-3">
+                                Quantity : <span th:text="${basketItem.qty}"></span><br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <!--                                <a th:href="@{/basket/delete(basketItemId=${basketItem.id})}">Remove</a>-->
+                                <a th:href="@{/basket/delete(basketItemId=${basketItem.id})}"
+                                   onclick="if(!(confirm('Are you sure?'))) return false"
+                                   class="btn btn-outline-danger btn-sm" style="font-size:10px;">Remove</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xl-3 col-lg-4">
+            <div class="card card-basket bg-light mb-3">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Your order</h3>
+                    <div th:if="${emptyOrderList}">
+                        <p class="text-center">You have no items in your shopping cart.</p>
+                    </div>
+
+                    <div class="row" style="font-size:13px;">
+                        <div class="col-7 text-left">
+                            Items:
+                        </div>
+                        <div class="col-5 text-right">
+                            <span th:text="${#lists.size(basketItemList)}"></span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="font-size:13px;">
+                        <div class="col-8 text-left">
+                            Copies:
+                        </div>
+                        <div class="col-4 text-right">
+                            <span th:text="${totalQty}"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" style="font-size:13px;">
+                        <div class="col-8 text-left">
+                            Total before tax:
+                        </div>
+                        <div class="col-4 text-right">
+                            $<span th:text="${#numbers.formatDecimal(totalPrice, 1, 2)}"></span>
+                        </div>
+                    </div>
+
+                    <div class="row" style="font-size:13px;">
+                        <div class="col-7 text-left">
+                            Estimated tax:
+                        </div>
+                        <div class="col-5 text-right">
+                            $<span th:with="tax=${totalPrice*0.06}"
+                                   th:text="${#numbers.formatDecimal(tax, 1, 2)}"></span>
+                        </div>
+                    </div>
+                    <div class="row" style="font-size:13px;">
+                        <div class="col-7 text-left">
+                            Shipping costs:
+                        </div>
+                        <div class="col-5 text-right">
+                            <span>$0.00</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-7 text-left">
+                            <strong>Total Price:</strong>
+                        </div>
+                        <div class="col-5 text-right"><strong>
+                            <span th:with="total=${totalPrice+totalPrice*0.06}"
+                                  th:text="'$'+${#numbers.formatDecimal(total, 1, 2)}"></span></strong>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-success btn-block"><a th:href="@{/checkout}"
+                                                                               style="color:white;"><strong>Proceed to
+                        Checkout</strong></a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: footer"></div>
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+</body>
+
+
+</html>

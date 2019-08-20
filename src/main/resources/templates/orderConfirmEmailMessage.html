@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        table, table th, td, h3, h4, p {
+            padding-left: 15px;
+            padding-right: 15px;
+            text-align: left;
+            color: black;
+        }
+
+        td, h3, h4, p {
+            font-weight: 300;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        #addressTable th {
+            padding-top: 15px;
+            padding-bottom: 5px;
+        }
+
+        #addressTable {
+            background-color: rgb(239, 239, 239);
+        }
+    </style>
+</head>
+
+<body style="color:black;">
+<h3>Dear <span th:text="${#strings.capitalize(user.username)}"></span>,</h3>
+
+<h4>Thank you for ordering at our store.</h4>
+
+<table id="addressTable">
+    <thead>
+    <th>Your order will be sent to:</th>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${order.orderAddress.fullName}"></td>
+    </tr>
+    <tr>
+        <td th:text="${order.orderAddress.streetAddress1}"></td>
+    </tr>
+    <tr>
+        <td th:text="${order.orderAddress.city}+', '+${order.address.postCode}"></td>
+    </tr>
+    <tr>
+        <td style="padding-bottom:5px;" th:text="${order.orderAddress.countryOrRegion}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Order Details</h3>
+<table>
+    <thead>
+    <th>Name</th>
+    <th style="text-align:center;">Quantity</th>
+    <th>Price</th>
+    </thead>
+
+    <tbody>
+    <div th:each="item : ${order.orderedItems}">
+        <tr>
+            <td th:text="${item.book.title}"></td>
+            <td style="text-align:center;" th:text="${item.qty}"></td>
+            <td>$<span th:text="${#numbers.formatDecimal(item.book.ourPrice, 1, 2)}"></span></td>
+        </tr>
+    </div>
+    <tr>
+        <td></td>
+        <td><strong>Total Price:</strong></td>
+        <td>$<span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></span></td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<p>I hope to see you again soon</p>
+<p>Thanks, Eimantas</p>
+</body>
+</html>

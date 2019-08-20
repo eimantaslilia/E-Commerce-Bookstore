@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+    <div th:if="${category}">
+        <strong><span style="text-align:center; font-size:25px;" th:text="${category}"></span></strong>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 browseLinks">
+            <div class="list-group list-group-flush">
+                <a th:href="@{/browse}" th:classappend="${activeAll}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light ">All Genres</a>
+                <a th:href="@{/searchByCategory(category='Classics')}"
+                   th:classappend="${activeClassics}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Classics</a>
+                <a th:href="@{/searchByCategory(category='Crime &amp; Mystery')}"
+                   th:classappend="${activeCrimeMystery}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Crime &amp; Mystery</a>
+                <a th:href="@{/searchByCategory(category='Fantasy')}"
+                   th:classappend="${activeFantasy}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Fantasy</a>
+                <a th:href="@{/searchByCategory(category='Fiction')}"
+                   th:classappend="${activeFiction}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Fiction</a>
+                <a th:href="@{/searchByCategory(category='Nonfiction')}"
+                   th:classappend="${activeNonfiction}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Nonfiction</a>
+                <a th:href="@{/searchByCategory(category='Romance')}"
+                   th:classappend="${activeRomance}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Romance</a>
+                <a th:href="@{/searchByCategory(category='Science Fiction')}"
+                   th:classappend="${activeScienceFiction}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Science Fiction</a>
+                <a th:href="@{/searchByCategory(category='Thriller')}"
+                   th:classappend="${activeThriller}? 'active'"
+                   class="list-group-item list-group-item-action list-group-item-light">Thriller</a>
+            </div>
+        </div>
+
+        <div class="col-xl-8 col-lg-9">
+            <div th:if="${allBooks.isEmpty()}" style="text-align:center;">
+                <h4 style="text-align:center;">No results have been found</h4>
+            </div>
+
+            <div th:if="${!allBooks.isEmpty()}">
+                <table id="viewBooks" class="table">
+                    <thead class="invisible">
+                    <tr>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr data-th-each="book : ${allBooks}">
+                        <td>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-4">
+                                    <a th:href="@{/books/bookInfo(bookId=${book.id})}"> <img
+                                            class="card-img-top img-thumbnail img-responsive"
+                                            th:src="${book.imagePath}"
+                                            style=" width:auto;"></a>
+                                </div>
+
+                                <div class="col-md-8 col-sm-8">
+
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <h3 class="card-title"><a
+                                                    th:href="@{/books/bookInfo(bookId=${book.id})}"><strong><span
+                                                    th:text="${book.title}"></span></strong></a></h3>
+                                            <h6>by <span th:text="${book.author}"> </span> <a
+                                                    th:href="${book.goodreadsUrl}"><i
+                                                    class="fab fa-goodreads"></i></a>
+                                            </h6>
+                                        </div>
+                                        <div class="col-md-3">
+
+                                                <span style="text-align:right; color:darkred; font-size:20px;"><strong><span
+                                                        th:text="'$'+${#numbers.formatDecimal(book.ourPrice, 0, 2)}+''"></span></strong> </span>
+                                            <span sec:authorize="hasRole('USER')">
+                                                <a th:href="@{/basket/addFromBrowse(bookId=${book.id})}"><i
+                                                        style="color:black; font-size:18px;"
+                                                        class="fas fa-cart-plus"></i></a>
+                                                </span>
+                                        </div>
+                                    </div>
+                                    <div style="height:200px;">
+                                        <p th:utext="${#strings.abbreviate(book.description, 500)}"></p>
+
+                                    </div>
+                                    <!--                                                <a style="color:firebrick;" th:href="@{/login}"> <i-->
+                                    <!--                                                        class="far fa-heart fa-lg"><strong><span-->
+                                    <!--                                                        style="font-size:14px;"> Add to Wish List</span></strong></i></a>-->
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <!--        <div class="col-md-1"></div>-->
+
+    </div>
+
+</div>
+
+<div th:replace="common/shared :: footer"></div>
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+
+<div th:if="${#lists.size(allBooks)} > 5 ">
+    <script>
+        $(document).ready(function () {
+            $('#viewBooks').DataTable({
+                lengthMenu: [5],
+                stateSave: true,
+                "searching": false,
+                "lengthChange": false,
+                "pageLength": 5,
+                "bInfo": false,
+                "language": {
+                    "paginate": {
+                        "previous": false,
+                        "next": false,
+                    }
+                }
+            });
+        });
+
+    </script>
+
+</div>
+
+</body>
+
+
+</html>

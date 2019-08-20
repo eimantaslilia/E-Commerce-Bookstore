@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html lang="en" xlmns:th="http://www.w3.org/1999/xhtml"
+      xmlns:xlmns="http://www.w3.org/1999/xhtml"
+      xlmns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<!-- Header Element -->
+
+<head>
+    <div th:fragment="common-header">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- BootStrap 4-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+              integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
+              crossorigin="anonymous">
+
+        <!-- Data Tables CSS, JS is at the bottom-scripts -->
+        <link th:href="@{/css/jquery.dataTables.min.css}" rel="stylesheet"/>
+        <!-- Main css-->
+        <link th:href="@{/css/main.css}" rel="stylesheet" type="text/css">
+
+
+        <!--        Google Fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap"
+              rel="stylesheet">
+
+
+        <title>Bookstore</title>
+    </div>
+</head>
+
+<!-- End of Header -->
+
+<body>
+
+<!-- Jumbotron -->
+
+<div th:fragment="jumbotron">
+    <div class="container">
+        <a th:href="@{/}">
+            <div class="jumbotron">
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- End of Jumbotron -->
+
+<!-- Navbar Element -->
+<div th:fragment="navbar">
+    <div class="container-fluid mainbar">
+        <div class="container">
+
+            <nav class="navbar navbar-expand-lg navbar-light ">
+                <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book fa-lg"></i></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+
+                        <li class="nav-item" th:class="${classActiveHome}">
+                            <a class="nav-link" th:href="@{/}">Home</a>
+                        </li>
+
+                        <li class="nav-item" th:class="${classActiveBrowse}">
+                            <a class="nav-link" th:href="@{/browse}">Categories</a>
+                        </li>
+
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/admin/add}"><strong>Add Book</strong></a>
+                            </li>
+                        </div>
+
+
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/admin/all}"><strong>All Books</strong></a>
+                            </li>
+                        </div>
+
+
+                    </ul>
+                    <ul class="navbar-nav ">
+
+
+                        <form class="form-inline" th:action="@{/search}" method="post">
+                            <input class="form-control mr-sm-2" type="search" name="keyword"
+                                   placeholder="title or author..." aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0 btn-sm " style="margin-right:2rem;"
+                                    type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+
+                        <div sec:authorize="hasRole('ROLE_USER')">
+                            <li class="nav-item" style="margin-right:1rem;" th:class="${classActiveWishList}">
+                                <a class="nav-link" th:href="@{/wishlist}"><i class="far fa-heart fa-lg"></i> Wish List</a>
+                            </li>
+
+                        </div>
+
+                        <div sec:authorize="hasRole('ROLE_USER')">
+                            <li class="nav-item" style="margin-right:1rem;" th:class="${classActiveBasket}">
+                                <a class="nav-link" th:href="@{/basket/items}"><strong></strong><i
+                                        class="fas fa-shopping-basket fa-lg"></i> Cart</a>
+                            </li>
+                        </div>
+
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/logout}"><i class="far fa-user fa-lg"></i> Sign Out</a>
+                            </li>
+                        </div>
+
+                        <div sec:authorize="isAnonymous()">
+                            <li class="nav-item" th:class="${classActiveLogin}">
+                                <a class="nav-link" th:href="@{/login}"><i class="far fa-user fa-lg"></i> Sign In /
+                                    Register</a>
+                            </li>
+                        </div>
+
+                        <div sec:authorize="hasRole('ROLE_USER')">
+                            <li class="nav-item">
+                                <div class="dropdown">
+                                    <button class="btn nav-link" type="button" id="dropdownMenuButton"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="far fa-user fa-lg"></i>
+                                    </button>
+
+                                    <div class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item nav-item nav-link" th:href="@{/profile}">Account</a>
+                                        <a class="dropdown-item" th:href="@{/logout}">Sign Out</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </div>
+
+                    </ul>
+                </div>
+            </nav>
+
+        </div>
+    </div>
+</div>
+
+<!-- End of Navbar -->
+
+<!-- Footer Element-->
+<div th:fragment="footer">
+
+    <div class="container-fluid footer-bottom">
+        <hr class="border:1px solid black;">
+        <div class="container footer-bottom">
+
+
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <br>
+                    <h6>Explore</h6>
+                    <a th:href="@{/login}" style="color:black;">Sign In/Join</a><br>
+                    <a th:href="@{/browse}" style="color:black;">Browse our collection</a><br>
+                    <a th:href="@{/deliveryInfo}" style="color:black;">Where do we deliver?</a><br>
+
+
+                </div>
+
+                <div class="col-md-4">
+                    <br>
+                    <h6>About Bookstore</h6>
+                    <a href="https://github.com/eimantaslilia/e-commerce-bookstore" style="color:black;">About
+                        us</a><br>
+                    <a href="https://github.com/eimantaslilia" style="color:black;">Contact Us</a>
+                    <br>
+
+
+                </div>
+
+                <div class="col-md-3">
+                    <br>
+                    <h6>Follow Us</h6>
+                    <a href="https://github.com/eimantaslilia"><i class="fab fa-github-square">
+                    </i><span style="color:black;"> GitHub</span></a><br>
+                    <a href="https://github.com/eimantaslilia"><i class="fab fa-facebook-square">
+                    </i><span style="color:black;"> Facebook</span></a><br>
+                    <a href="https://github.com/eimantaslilia"><i class="fab fa-twitter">
+                    </i><span style="color:black;"> Twitter</span></a><br>
+                    <!--                    <a href="https://github.com/eimantaslilia" ><i class="fab fa-instagram">-->
+                    <!--                        </i><span style="color:black;"> Instagram</span></a>-->
+
+                </div>
+            </div>
+
+
+            <div class="text-center"><a href="https://www.freepik.com/free-photos-vectors/people"
+                                        style="font-size:12px;">People vector created by rawpixel.com -
+                www.freepik.com</a>
+            </div>
+            <div class="text-center py-3">© Eimantas Lilia, 2019. Personal, non-commercial project.</div>
+        </div>
+    </div>
+</div>
+
+<!--End of footer -->
+
+<!--Bottom-Scripts Element -->
+
+<div th:fragment="bottom-scripts">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    <script th:src="@{/js/scripts.js}"></script>
+    <!-- JS for DataTables Plugin -->
+    <script th:src="@{/js/jquery.dataTables.min.js}"></script>
+
+</div>
+
+<!-- End of Bottom-Scripts -->
+
+</body>
+
+
+</html>

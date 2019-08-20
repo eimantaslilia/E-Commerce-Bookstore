@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+    <table class="table" id="wishlistTable">
+        <div th:if="${wishList.isEmpty()}" style="text-align:center;">
+            <h5>Your Wish List is empty.</h5>
+            <br>
+            <h6><a th:href="@{/}">View</a> all of our books and maybe something will catch your eye.</h6>
+            <h6>Otherwise, consider <a th:href="@{/browse}">browsing</a> through our selection by genre.</h6>
+            <h6>Also, feel free to use the search bar to look for books by your favourite authors, or by title
+                itself!</h6>
+        </div>
+
+        <thead>
+
+        <div th:if="${!wishList.isEmpty()}" style="text-align:center;">
+            <th style="text-align:center;"><h3><strong>Wish List</strong></h3>
+        </div>
+
+        <div th:if="${notEnoughStock}">
+            <span style="color:yellow; text-align:center;" th:text="${notEnoughStock}"></span>
+        </div>
+
+        <div th:if="${addedToWishList}">
+            <span style="color:forestgreen;" th:text="${addedToWishList}"></span>
+        </div>
+
+        <div th:if="${removedFromWishList}" style="text-align:center;">
+            <div th:if="${!wishList.isEmpty()}" style="text-align:center;">
+                <span style="color:mediumvioletred;" th:text="${removedFromWishList}"></span>
+            </div>
+        </div>
+        </th>
+        </thead>
+        <tbody>
+
+        <tr th:each="item : ${wishList}">
+            <td>
+                <div class="row">
+                    <div class="col-xl-2 col-lg-3 col-md-3">
+                        <a th:href="@{/books/bookInfo(bookId=${item.book.id})}"> <img
+                                class="card-img-top img-thumbnail img-responsive"
+                                th:src="${item.book.imagePath}"
+                                style="height:auto; max-width:100%;"></a>
+                    </div>
+                    <div class="col-xl-7 col-lg-6 col-md-5">
+                        <h4><strong><a th:href="@{/books/bookInfo(bookId=${item.book.id})}"><span
+                                th:text="${item.book.title}"></span></a></strong></h4>
+                        <h6>by <span th:text="${item.book.author}"></span></h6>
+                        <p th:with="text=${item.book.description}" th:utext="${#strings.abbreviate(text, 700)}"></p>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4" style="font-size:13px;">
+                        <strong>
+                            <div th:text="'Genre: '+${item.book.genre}"></div>
+                        </strong>
+                        <strong>
+                            <div th:text="'Pages: '+${item.book.numberOfPages}"></div>
+                        </strong>
+                        <strong>
+                            <div th:text="'Publication Date: '+${item.book.publicationDate}"></div>
+                        </strong>
+                        <strong>
+                            <div th:text="'Published by '+${item.book.publisher}"></div>
+                        </strong>
+                        <strong>
+                            <div th:text="'Format: '+${item.book.format}"></div>
+                        </strong>
+                        <strong>
+                            <div th:text="'ISBN: '+${item.book.isbn}"></div>
+                        </strong>
+                        <strong>
+                            <div th:text="'Price: $'+${#numbers.formatDecimal(item.book.ourPrice, 1, 2)}"></div>
+                        </strong>
+                        <br>
+                        <br>
+                        <a th:href="@{/wishlist/moveToBasket(itemId=${item.id})}"
+                           class="btn btn-outline-success btn-sm"><strong style="font-size:11px;">Move to
+                            Basket</strong></a>
+                        <a th:href="@{/wishlist/delete(itemId=${item.id})}"
+                           onclick="if(!(confirm('Are you sure?'))) return false"
+                           class="btn btn-outline-danger btn-sm"><strong style="font-size:11px;">Remove</strong></a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: footer"></div>
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+</body>
+
+
+</html>

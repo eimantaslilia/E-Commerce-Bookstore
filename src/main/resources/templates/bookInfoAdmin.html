@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-4">
+            <button class="btn btn-outline-success btn-sm"><a th:href="@{/admin/all}">Go back</a></button>
+            <button class="btn btn-outline-warning btn-sm"><a th:href="@{/admin/updateBook(bookId=${book.id})}">Edit</a>
+            </button>
+            <button class="btn btn-outline-danger btn-sm"><a th:href="@{/admin/deleteBook(bookId=${book.id})}"
+                                                             onclick="if(!(confirm('Are you sure?'))) return false">Delete</a>
+            </button>
+            <br>
+
+            <img th:src="${book.imagePath}" class="img-responsive img-thumbnail" style="margin-top:15px;"/>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2><strong><span th:text="${book.title}"></span></strong></h2>
+                    <h5>by <span th:text="${book.author}"></span></h5>
+                    <hr>
+                    <p><span th:utext="${book.description}"></span></p>
+                    <hr>
+                    <div><strong>Format: </strong><span th:text="${book.format}"></span>, <span
+                            th:text="${book.numberOfPages}"></span> pages
+                    </div>
+                    <div><strong>Published: </strong><span th:text="${book.publicationDate}"></span> by <span
+                            th:text="${book.publisher}"></span></div>
+                    <div><strong>Genre: </strong><span th:text="${book.genre}"></span></div>
+
+                    <div><strong>ISBN: </strong><span th:text="${book.isbn}"></span></div>
+                    <br>
+                    <div><strong>Copies in Stock: </strong><span th:text="${book.stock}"></span></div>
+                    <div><strong>Bought for: $</strong><span th:text="${book.boughtPrice}"></span></div>
+                    <div><strong>Selling for: $</strong><span th:text="${book.ourPrice}"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: footer"></div>
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+</body>
+</html>

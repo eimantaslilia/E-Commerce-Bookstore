@@ -1,0 +1,295 @@
+body, header, .navbar, .mainbar, .footer-bottom {
+    /*font-family: 'Titillium Web', sans-serif;*/
+    font-family: 'Quicksand', sans-serif;
+}
+
+span {
+    /*font-family: 'Titillium Web', sans-serif !important;*/
+    font-family: 'Quicksand', sans-serif !important;
+}
+
+.nav-link.active, .active > .nav-link {
+    color: darkred !important;
+}
+
+.nav-link {
+    color: black !important;
+}
+
+.nav-link.active, .show > .nav-link {
+    background-color: whitesmoke !important;
+}
+
+li {
+    color: white;
+}
+
+.hehe {
+    text-align: center;
+}
+
+.carousel {
+    width: 640px;
+    height: 160px;
+}
+
+.jumbotron {
+    /*background-image: url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1153&q=80");*/
+    background-image: url(../images/booksAndTrees.jpg);
+    background-size: cover;
+    background-position:center;
+    height:350px;
+    width:auto;
+}
+.deliveryImage{
+    background-image: url(../images/delivery400px.gif);
+    height:400px;
+    width:auto;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+.mainbar {
+    background-color: #f4f3f3;
+    margin-bottom: 10px;
+}
+
+.secondbar {
+    background-color: #E5E6E4;
+}
+
+.footer-bottom {
+    background-color: ghostwhite;
+}
+.footer-bottom h6 {
+    font-weight: 700;
+}
+
+.list-group-item-light.list-group-item-action.active {
+    /*color:black !important;*/
+    background-color: #101D42;
+}
+
+.list-group-item-light {
+    color: black;
+}
+
+.list-group-item-light.list-group-item-action:hover {
+    color: darkred;
+}
+
+.table td {
+    /*border: 0;*/
+}
+
+.nav-link:hover {
+    color: darkred !important;
+}
+
+.nav-link {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.browseLinks {
+    font-weight: 600;
+}
+
+.searchbar {
+    margin-top: -15px;
+}
+
+/*Expanding cards in home page at low screen size*/
+/*@media screen and (max-width: 480px) {*/
+/*    .mainPageCard {*/
+/*        !*display: none !important;*!*/
+/*        width: auto !important;*/
+/*        height: auto !important;*/
+
+/*    }*/
+/*}*/
+
+/*@media screen and (max-width: 480px) {*/
+/*    .mainPageImage {*/
+/*        !*display: none !important;*!*/
+/*        width: 410px !important;*/
+/*        height: auto !important;*/
+
+/*    }*/
+/*}*/
+
+/*Styling for Sign In, Sign Out, Forgotten Password Pages/Forms*/
+
+/* More padding for input fields */
+:root {
+    --input-padding-x: 1.5rem;
+    --input-padding-y: .75rem;
+}
+
+
+
+.card-signin {
+    border: 0;
+    border-radius: 1.5rem;
+    box-shadow: 0 0rem 1rem 0 rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    background-color: #F4F3F3 !important;
+}
+
+.card-signin .card-title {
+    margin-bottom: 2rem;
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+signUpText {
+
+}
+
+.card-signin .card-body {
+    padding: 2rem;
+    font-weight: 600;
+}
+
+.form-signin {
+    width: 100%;
+}
+
+.form-signin .btn {
+    font-size: 80%;
+    border-radius: 5rem;
+    letter-spacing: .1rem;
+    font-weight: bold;
+    padding: 1rem;
+    transition: all 0.2s;
+}
+
+.form-label-group {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.form-label-group input {
+    height: auto;
+    border-radius: 2rem;
+}
+
+.form-label-group > input {
+    padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group input:not(:placeholder-shown) ~ label {
+    padding-top: calc(var(--input-padding-y) / 3);
+    padding-bottom: calc(var(--input-padding-y) / 3);
+    font-size: 12px;
+    color: #777;
+}
+
+/*Image Cards in book info*/
+.card-bookInfo {
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+
+}
+
+.card-bookInfo .card-title {
+    margin-bottom: 2rem;
+    font-weight: 300;
+    font-size: 1.5rem;
+}
+
+.card-bookInfo .card-body {
+    padding: 2rem;
+}
+
+/*Card in basket*/
+.card-basket {
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.5);
+
+}
+
+.card-basket .card-title {
+    margin-bottom: 2rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.card-basket .card-body {
+    padding: 2rem;
+    background: #DFDFDF;
+    background: linear-gradient(to right, #FFFFFF, #F4F3F3);
+
+    /*background: #007bff;*/
+    /*background: linear-gradient(to right, #0062E6, #33AEFF);*/
+}
+
+/*Checkout Tabs*/
+.card-checkout-tab {
+    border: 0;
+    border-radius: 1rem;
+    /*box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.9);*/
+
+}
+
+.card-checkout-tab .card-title {
+    margin-bottom: 2rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+
+}
+
+.card-checkout-tab .card-header {
+    /*border:0.1rem solid darkgrey;*/
+    border: 4rem;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+    background: whitesmoke !important;
+    border: 1px solid lightslategrey;
+    /*background: linear-gradient(to right,#C0E8F9, #BCD3F2) !important;*/
+}
+
+.card-checkout-tab .card-body {
+    padding: 2rem;
+    /*background:#DFDFDF;*/
+    /*background: linear-gradient(to right, #FFFFFF, #F4F3F3);*/
+
+    /*background: #007bff;*/
+    /*background: linear-gradient(to right, #0062E6, #33AEFF);*/
+}
+
+.yourOrderTable {
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+}
+
+/*Order Cards*/
+.card-ordered .card-title {
+    margin-bottom: 2rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+
+}
+
+.card-ordered .card-header {
+    /*border:0.1rem solid darkgrey;*/
+    border: 4rem;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+    background: #81A684 !important;
+    border: 1px solid lightslategrey;
+    /*background: linear-gradient(to right,#C0E8F9, #BCD3F2) !important;*/
+}
+
+.card-ordered .card-body {
+    padding: 2rem;
+    /*background:#DFDFDF;*/
+    /*background: linear-gradient(to right, #FFFFFF, #F4F3F3);*/
+
+    /*background: #007bff;*/
+    /*background: linear-gradient(to right, #0062E6, #33AEFF);*/
+}
+#wishlistTable th {
+    border: 0;
+}

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+    <h2 style="color:green; text-align:center;">Order placed successfully</h2>
+    <br>
+    <h6 style="text-align:center;">Your order was placed on <span th:text="${today}"></span></h6>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="card text-center card-ordered" style="border:0;">
+                <div class="card-header bg-success mb-3">
+                    <strong>Shipping Information</strong>
+                </div>
+                <div class="card-body" style="padding-top: 0rem;">
+                    <div class="card-text" th:text="${address.fullName}"></div>
+                    <div class="card-text"
+                         th:text="${address.streetAddress1}+', '+${address.city}+', '+${address.postCode}+', '+${address.countryOrRegion}"></div>
+                    <strong>Phone: </strong><span class="card-text" th:text="${address.phoneNumber}"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+            <div class="card text-center card-ordered" style="border:0;">
+                <div class="card-header bg-success mb-3">
+                    <strong>Payment Method</strong>
+                </div>
+                <div class="card-body" style="padding-top: 0rem;">
+                    <div class="card-subtitle" th:text="${payment.nameOnCard}"></div>
+                    <div class="card-text" th:text="'Card ending in '+${lastCharacters}"></div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <h4 style="text-align:center;"><strong>Order Summary</strong></h4>
+    <br>
+    <table class="table table-striped">
+        <thead>
+        <th>Title</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        </thead>
+
+        <tbody>
+        <tr th:each="item : ${itemList}">
+            <td><strong><a th:href="@{/books/bookInfo(bookId=${item.book.id})}"><span
+                    th:text="${item.book.title}+' by '+${item.book.author}"></span></a></strong></td>
+            <td th:text="${item.qty}"></td>
+            <td th:with="totalForBook=${item.book.ourPrice*item.qty}"
+                th:text="'$'+${#numbers.formatDecimal(totalForBook, 1, 2)}"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td><strong><span th:with="total=${totalPrice+totalPrice*0.06}"
+                              th:text="'Total Price: $'+${#numbers.formatDecimal(total, 1, 2)}"></span></strong></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: footer"></div>
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+</body>
+
+
+</html>

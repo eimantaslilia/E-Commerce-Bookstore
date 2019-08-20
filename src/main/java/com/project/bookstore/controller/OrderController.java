@@ -1,0 +1,113 @@
+package com.project.bookstore.controller;
+
+import com.project.bookstore.domain.*;
+import com.project.bookstore.service.BasketService;
+import com.project.bookstore.service.OrderService;
+import com.project.bookstore.service.PaymentService;
+import com.project.bookstore.service.UserService;
+import com.project.bookstore.utility.MailConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
+
+import javax.persistence.Column;
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+public class OrderController {
+
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private BasketService basketService;
+
+    @Autowired
+    private PaymentService paymentService;
+
+
+    @GetMapping("/createOrder")
+    public ModelAndView createOrder(Principal principal, ModelMap model, RedirectAttributes ra) {
+
+        User user = userService.findByUsername(principal.getName());
+
+        if (user.getAddressList().isEmpty()) {
+            model.addAttribute("noAddress", true);
+            model.addAttribute("checkoutAddressChanged", true);
+            return new ModelAndView("forward:/checkout", model);
+        }
+
+        if (user.getPaymentList().isEmpty()) {
+            model.addAttribute("noPayment", true);
+            model.addAttribute("checkoutPaymentChanged", true);
+            return new ModelAndView("forward:/checkout", model);
+        }
+
+        List<BasketItem> basketItemList = basketService.findByShoppingCart(user.getShoppingCart());
+
+        if (basketItemList.isEmpty()) {
+            ra.addFlashAttribute("emptyOrderList", true);
+            return new ModelAndView("redirect:/basket/items");
+        }
+
+        List<Address> addressList = user.getAddressList();
+        OrderAddress orderAddress = new OrderAddress();
+        for (Address address : addressList) {
+            if (address.isDefaultAddress()) {
+                orderAddress.setFullName(address.getFullName());
+                orderAddress.setPhoneNumber(address.getPhoneNumber());
+                orderAddress.setCountryOrRegion(address.getCountryOrRegion());
+                orderAddress.setPostCode(address.getPostCode());
+                orderAddress.setStreetAddress1(address.getStreetAddress1());
+                orderAddress.setCity(address.getCity());
+
+            }
+        }
+
+        List<Payment> paymentList = user.getPaymentList();
+        OrderPayment orderPayment = new OrderPayment();
+        for (Payment payment : paymentList) {
+            if (payment.isDefaultCard()) {
+                orderPayment.setNameOnCard(payment.getNameOnCard());
+                orderPayment.setCardNumber(payment.getCardNumber());
+                orderPayment.setExpiryMonth(payment.getExpiryMonth());
+                orderPayment.setExpiryYear(payment.getExpiryYear());
+                orderPayment.setCvc(payment.getCvc());
+            }
+        }
+
+        double totalPrice = 0;
+
+        for (BasketItem item : basketItemList) {
+            totalPrice += item.getBook().getOurPrice() * item.getQty();
+        }
+
+        ModelAndView mav = new ModelAndView("afterOrdering");
+        mav.addObject("itemList", basketItemList);
+        mav.addObject("address", orderAddress);
+        mav.addObject("payment", orderPayment);
+        mav.addObject("today", LocalDate.now());
+        mav.addObject("totalPrice", totalPrice);
+
+
+        String lastCharacters = paymentService.last4OfCardNumber(orderPayment.getCardNumber());
+        mav.addObject("lastCharacters", lastCharacters);
+
+        orderService.createOrder(user, basketItemList, orderAddress, orderPayment);
+        basketService.clearShoppingCart(user.getShoppingCart());
+
+        return mav;
+    }
+}

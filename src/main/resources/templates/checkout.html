@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+
+<head th:replace="common/shared :: common-header">
+
+<body>
+
+<div th:replace="common/shared :: navbar"></div>
+
+<div th:replace="common/shared :: jumbotron"></div>
+
+<!-- Page Content -->
+
+<div class="container">
+
+    <div th:if="${basketItemList.isEmpty()}" style="text-align:center;">
+        <h3>Your Shopping Cart is empty!</h3>
+        <br>
+        <br>
+        <p>Browse our selection of the newest books from all over the world and choose your favourites!</p>
+        <br>
+    </div>
+
+    <div th:if="${basketItemList!=null and !basketItemList.isEmpty()}">
+        <!--        flex-column-reverse flex-xl-row-->
+        <div class="row flex-column-reverse flex-lg-row ">
+            <!-- Accordion -->
+            <div class="col-xl-9 col-lg-8" id="checkoutTabs">
+                <div id="accordion">
+                    <div class="card card-checkout-tab">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#addressInfo"
+                                        aria-expanded="true" aria-controls="collapseOne">
+                                    <strong style="color:black;">1. Delivery Address</strong>
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="addressInfo" class="collapse show" aria-labelledby="addressInfo"
+                             data-parent="#accordion">
+                            <div class="card-body" style="font-size:13px;">
+                                <div th:if="${noAddress}">
+                                    <span style="text-align:center; color:green;"><h6><strong>You have to add an address to proceed with the order</strong></h6></span>
+                                    <hr>
+                                </div>
+                                <!-- Table to display existing addresses -->
+                                <div th:if="${not #lists.isEmpty(userAddressList)}">
+
+                                    <table class="table table-hover table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="address : ${userAddressList}">
+                                            <td style="text-align:left;">
+                                                <div th:if="${address.defaultAddress}"><i
+                                                        class="fas fa-check-circle fa-lg"></i></div>
+                                                <div th:if="${!address.defaultAddress}">
+                                                    <a th:href="@{/setAsDefaultAddress(addressId=${address.id},checkout=true)}"><i
+                                                            class="far fa-circle fa-lg"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td th:text="${address.fullName}"></td>
+                                            <td th:text="${address.streetAddress1}+', '+${address.city}+', '+${address.postCode}+', '+${address.countryOrRegion}"></td>
+                                            <td>
+                                                <a th:href="@{/removeAddress(id=${address.id},checkout=true)}"
+                                                   onclick="if(!(confirm('You sure?'))) return false"><i
+                                                        class="fas fa-minus-square"></i></a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <a th:href="@{/addressFromCheckout}"><i class="fas fa-plus"></i> Add a new
+                                            address</a>
+                                        <br>
+                                        <br>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <a data-toggle="collapse" data-parent="#accordion"
+                                           class="btn btn-light btn-block btn-sm"
+                                           style="border:1px solid darkgrey; font-size:0.9em;"
+                                           href="#paymentInfo"><strong>Next</strong></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-checkout-tab">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#paymentInfo"
+                                        aria-expanded="false" aria-controls="collapseTwo">
+                                    <strong style="color:black;">2. Payment Information</strong>
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="paymentInfo" class="collapse" aria-labelledby="paymentInfo" data-parent="#accordion">
+                            <div class="card-body" style="font-size:13px;">
+                                <div th:if="${noPayment}">
+                                    <span style="text-align:center; color:green;"><h6><strong>You have to add a payment method to proceed with the order</strong></h6></span>
+                                    <hr>
+                                </div>
+                                <div th:if="${not #lists.isEmpty(userPaymentList)}">
+                                    <table class="table table-hover table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Card Expiration Date</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="payment : ${userPaymentList}">
+
+                                            <td style="text-align:left;">
+                                                <div th:if="${payment.defaultCard}"><i
+                                                        class="fas fa-check-circle fa-lg"></i></div>
+
+                                                <div th:if="${!payment.defaultCard}"><a
+                                                        th:href="@{/setAsDefaultPayment(paymentId=${payment.id},checkout=true)}"><i
+                                                        class="far fa-circle fa-lg"></i></a></div>
+                                            </td>
+                                            <td th:text="${payment.nameOnCard}"></td>
+                                            <td th:text="${payment.expiryMonth}+'/'+${payment.expiryYear}"></td>
+                                            <td></td>
+                                            <td>
+                                                <a th:href="@{/removeCreditCard(id=${payment.id},checkout=true)}"
+                                                   onclick="if(!(confirm('You sure?'))) return false"><i
+                                                        class="fas fa-minus-square"></i></a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <a th:href="@{/paymentFromCheckout}"><i class="fas fa-plus"></i> Add a new
+                                            payment</a>
+                                        <br>
+                                        <br>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a data-toggle="collapse" data-parent="#accordion"
+                                           class="btn btn-light btn-block btn-sm"
+                                           style="border:1px solid darkgrey; font-size:0.9em;"
+                                           href="#reviewInfo"><strong>Next</strong></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-checkout-tab">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#reviewInfo"
+                                        aria-expanded="false" aria-controls="reviewInfo">
+                                    <strong style="color:black;">3. Items and delivery</strong>
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="reviewInfo" class="collapse" aria-labelledby="reviewInfo" data-parent="#accordion">
+                            <div class="card-body">
+                                <table class="table table-bordered yourOrderTable" style="font-size:13px;">
+                                    <thead>
+                                    <th><h4 style="text-align:center;"><strong>Your order</strong></h4></th>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="basketItem : ${basketItemList}">
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <a th:href="@{/books/bookInfo(bookId=${basketItem.book.id})}"> <img
+                                                            class="card-img-top img-thumbnail img-responsive"
+                                                            th:src="${basketItem.book.imagePath}"
+                                                            style="height:auto; max-width:100%;"></a>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <h5><strong><a
+                                                            th:href="@{/books/bookInfo(bookId=${basketItem.book.id})}"><span
+                                                            th:text="${basketItem.book.title}"></span></a></strong></h5>
+                                                    <h6>by <span th:text="${basketItem.book.author}"></span></h6>
+
+                                                    <span style="color:indianred"><strong>$<span
+                                                            th:text="${basketItem.book.ourPrice}"></span></strong></span>
+                                                    <span style="font-size:13px; color:lightcoral;"><strong>RRP: $<span
+                                                            th:text="${basketItem.book.boughtPrice}"
+                                                            style="text-decoration: line-through"></span></strong></span>
+
+                                                </div>
+                                                <div class="col-md-3">
+                                                    Quantity : <span th:text="${basketItem.qty}"></span><br>
+                                                    <br>
+                                                    <br>
+                                                    <br>
+                                                    <br>
+                                                    <a th:href="@{/basket/deleteFromCheckout(basketItemId=${basketItem.id})}"
+                                                       onclick="if(!(confirm('Are you sure?'))) return false"
+                                                       class="btn btn-outline-danger btn-sm" style="font-size:10px;">Remove</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-xl-5">
+                                            <strong style="color:green;">Estimated delivery date: <span
+                                                    th:text="${#temporals.format(localDateTime, 'dd-MM-yyyy')}"></span></strong>
+                                        </div>
+                                        <div class="col-xl-3 ">
+                                            <div><strong>
+                                                Order Total: $<span th:with="total=${totalPrice+totalPrice*0.06}"
+                                                                    th:text="${#numbers.formatDecimal(total, 1, 2)}"></span></strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4">
+
+                                            <a th:href="@{/createOrder}"
+                                               class="btn btn-warning btn-block btn-sm"><strong>Buy now</strong></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Card -->
+
+            <div class="col-xl-3 col-lg-4">
+                <br>
+                <div class="card card-basket bg-light mb-3">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">Order Summary</h4>
+
+                        <div class="row" style="font-size:13px;">
+                            <div class="col-7 text-left">
+                                Items:
+                            </div>
+                            <div class="col-5 text-right">
+                                <span th:text="${#lists.size(basketItemList)}"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size:13px;">
+                            <div class="col-8 text-left">
+                                Copies:
+                            </div>
+                            <div class="col-4 text-right">
+                                <span th:text="${totalQty}"></span>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="row" style="font-size:13px;">
+                            <div class="col-8 text-left">
+                                Total before tax:
+                            </div>
+                            <div class="col-4 text-right">
+                                $<span th:text="${#numbers.formatDecimal(totalPrice, 1, 2)}"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size:13px;">
+                            <div class="col-7 text-left">
+                                Estimated tax:
+                            </div>
+                            <div class="col-5 text-right">
+                                $<span th:with="tax=${totalPrice*0.06}"
+                                       th:text="${#numbers.formatDecimal(tax, 1, 2)}"></span>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size:13px;">
+                            <div class="col-7 text-left">
+                                Shipping costs:
+                            </div>
+                            <div class="col-5 text-right">
+                                <span>$0.00</span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-7 text-left">
+                                <strong>Total Price:</strong>
+                            </div>
+                            <div class="col-5 text-right"><strong>
+                                $<span th:with="total=${totalPrice+totalPrice*0.06}"
+                                       th:text="${#numbers.formatDecimal(total, 1, 2)}"></span></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- End of Page Content -->
+
+<div th:replace="common/shared :: footer"></div>
+
+<div th:replace="common/shared :: bottom-scripts"></div>
+
+<script th:inline="javascript" th:if="${checkoutPaymentChanged}">
+    $(document).ready(function () {
+        $("#paymentInfo").collapse('show');
+    })
+</script>
+
+<script th:inline="javascript" th:if="${checkoutAddressChanged}">
+    $(document).ready(function () {
+        $("#addressInfo").collapse('show');
+    })
+</script>
+
+<script th:inline="javascript" th:if="${reviewChanged}">
+    $(document).ready(function () {
+        $("#reviewInfo").collapse('show');
+    })
+</script>
+
+</body>
+
+
+</html>
