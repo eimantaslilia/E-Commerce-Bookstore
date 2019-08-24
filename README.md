@@ -4,6 +4,8 @@ I worked on this project because I wanted to learn how to implement common funct
 
 Feel free to register to the [site](http://bookstore-eimantas.eu-west-2.elasticbeanstalk.com/) and test the functionality yourself, any feedback is welcome.
 
+![alt text](https://i.imgur.com/HmxH5hz.jpg)
+
 ## Technologies used
 * Spring Boot 
 * Maven
