@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +29,10 @@ public class HomeBrowseController {
 
         ModelAndView mav = new ModelAndView("browse");
 
-        List<Book> allBooks = bookService.findAllByOrder();
+        List<Book> allBooks = bookService.findAll();
+
+        allBooks.sort(Comparator.comparing(Book::getId));
+        Collections.reverse(allBooks);
         mav.addObject("allBooks", allBooks);
         mav.addObject("classActiveBrowse", "active");
         mav.addObject("activeAll", true);

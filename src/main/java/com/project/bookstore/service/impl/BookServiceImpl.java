@@ -39,13 +39,12 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
-    public List<Book> findAllByOrder() {
-        List<Book> books = bookRepository.findAllByOrderByIdDesc();
-        return books;
+    public List<Book> findAll() {
+        return bookRepository.findAllByOrderByIdDesc();
     }
+
     public Page<Book> findAllByPage(Pageable pageable) {
-        Page<Book> imagePage = bookRepository.findAllByOrderByIdDesc(pageable);
-        return imagePage;
+        return bookRepository.findAllByOrderByIdDesc(pageable);
     }
 
     public Book getOne(Long id) {
@@ -53,43 +52,42 @@ public class BookServiceImpl implements BookService {
     }
 
     public void deleteById(Long id) {
-
         deleteImageFromS3(id);
         bookRepository.deleteById(id);
     }
 
     public void deleteImageFromS3(Long id) {
         Book book = getOne(id);
-        String name = book.getId() + ".jpg";
+        String bookName = book.getId() + ".jpg";
 
-        s3Client.deleteObject(bucketName, name);
+        s3Client.deleteObject(bucketName, bookName);
     }
 
     public List<Book> blurrySearch(String title) {
-        List<Book> bookList = bookRepository.findByTitleContaining(title);
-        return bookList;
+        return bookRepository.findByTitleContaining(title);
     }
 
     public List<Book> findByAuthor(String title) {
-        List<Book> bookList = bookRepository.findByAuthorContaining(title);
-        return bookList;
+        return bookRepository.findByAuthorContaining(title);
     }
-
 
     public List<Book> findByGenre(String category) {
-        List<Book> bookList = bookRepository.findByGenre(category);
-        return bookList;
+        return bookRepository.findByGenre(category);
     }
 
-    public void uploadBookImage(Book book, MultipartFile bookImage, String name) throws IOException {
+    public void uploadBookImage(Book book) throws IOException {
 
-        File convertedFile = convertMultipartToFile(bookImage, name);
+        String bookName = book.getId() + ".jpg";
 
-        String imagePath = "";
+        if (s3Client.doesObjectExist(bucketName, bookName)) {
+            deleteImageFromS3(book.getId());
+        }
 
-        imagePath = awsUrl + "/" + bucketName + "/" + name;
+        File convertedFile = convertMultipartToFile(book.getBookImage(), bookName);
 
-        s3Client.putObject(new PutObjectRequest(bucketName, name, convertedFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        String imagePath = awsUrl + "/" + bucketName + "/" + bookName;
+
+        s3Client.putObject(new PutObjectRequest(bucketName, bookName, convertedFile).withCannedAcl(CannedAccessControlList.PublicRead));
 
         convertedFile.delete();
         book.setImagePath(imagePath);

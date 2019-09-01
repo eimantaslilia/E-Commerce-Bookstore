@@ -32,14 +32,21 @@ public class AccountController {
         mav.addObject("userAddressList", user.getAddressList());
         mav.addObject("classActiveAccount", "active");
 
+        mav.addObject("userOrderList", userOrderListSortedById(user));
+
+        return mav;
+    }
+
+
+    private List<Order> userOrderListSortedById(User user){
+
         List<Order> orderList = user.getOrderList();
         orderList.sort(Comparator.comparing(Order::getId));
         Collections.reverse(orderList);
-        mav.addObject("userOrderList", orderList);
 
-        return mav;
-
+        return orderList;
     }
+
 
     @GetMapping("/profile")
     public ModelAndView ordersTab() {
