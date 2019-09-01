@@ -36,7 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> paymentList = paymentRepository.findAll();
 
         for (Payment payment : paymentList) {
-            if (payment.getId() == userPaymentId) {
+            if (payment.getId().equals(userPaymentId)) {
                 payment.setDefaultCard(true);
                 paymentRepository.save(payment);
             } else {

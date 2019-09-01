@@ -12,11 +12,13 @@ public interface BookService {
 
     Book save(Book book);
 
+//    void update(Book book) throws IOException;
+
     Book getOne(Long id);
 
     void deleteById(Long id);
 
-    List<Book> findAllByOrder();
+    List<Book> findAll();
 
     List<Book> blurrySearch(String title);
 
@@ -26,7 +28,7 @@ public interface BookService {
 
     Page<Book> findAllByPage(Pageable pageable);
 
-    void uploadBookImage(Book book, MultipartFile bookImage, String name) throws IOException;
+    void uploadBookImage(Book book) throws IOException;
 
     void deleteImageFromS3(Long id);
 

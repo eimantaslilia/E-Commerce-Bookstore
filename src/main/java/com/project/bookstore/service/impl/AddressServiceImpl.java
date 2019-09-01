@@ -39,7 +39,7 @@ public class AddressServiceImpl implements AddressService {
 
         List<Address> userAddressList = user.getAddressList();
         for (Address address : userAddressList) {
-            if (address.getId() == defaultAddressId) {
+            if (address.getId().equals(defaultAddressId)) {
                 address.setDefaultAddress(true);
                 addressRepository.save(address);
             } else {
