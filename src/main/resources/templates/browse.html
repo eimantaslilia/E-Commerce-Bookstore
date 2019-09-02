@@ -113,8 +113,6 @@
 
             </div>
         </div>
-        <!--        <div class="col-md-1"></div>-->
-
     </div>
 
 </div>
@@ -127,24 +125,25 @@
 <div th:if="${#lists.size(allBooks)} > 5 ">
     <script>
         $(document).ready(function () {
-            $('#viewBooks').on("draw.dt", function(){
+            $('#viewBooks').on("draw.dt", function () {
                 var elm = document.getElementById("viewBooks");
                 elm.scrollIntoView(true);
-                })
+            })
                 .DataTable({
-                lengthMenu: [5],
-                stateSave: true,
-                "searching": false,
-                "lengthChange": false,
-                "pageLength": 5,
-                "bInfo": false,
-                "language": {
-                    "paginate": {
-                        "previous": false,
-                        "next": false,
-                    }
-                }
-            });
+                    lengthMenu: [5],
+                    stateSave: true,
+                    "ordering": false,
+                    "searching": false,
+                    "lengthChange": false,
+                    "pageLength": 5,
+                    "bInfo": false,
+                    // "language": {
+                    //     "paginate": {
+                    //         "previous": false,
+                    //         "next": false,
+                    //     }
+                    // }
+                });
         });
 
     </script>

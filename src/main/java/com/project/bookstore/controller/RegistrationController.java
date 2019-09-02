@@ -5,11 +5,12 @@ import com.project.bookstore.domain.security.Role;
 import com.project.bookstore.domain.security.UserRole;
 import com.project.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.util.HashSet;
@@ -21,24 +22,32 @@ public class RegistrationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @PostMapping("/registration")
     public ModelAndView registerNewAccount(@ModelAttribute("username") String username,
                                            @ModelAttribute("email") String email,
-                                           @ModelAttribute("password") String password) throws Exception {
-
-        ModelAndView mav = new ModelAndView("signup");
-
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                                           @ModelAttribute("password") String password,
+                                           RedirectAttributes ra) throws Exception {
 
         if (userService.findByUsername(username) != null) {
-            mav.addObject("usernameExists", true);
-            return mav;
+            ra.addFlashAttribute("usernameExists", true);
+            return new ModelAndView("redirect:/signup");
         }
         if (userService.findByEmail(email) != null) {
-            mav.addObject("emailExists", true);
-            return mav;
+            ra.addFlashAttribute("emailExists", true);
+            return new ModelAndView("redirect:/signup");
         }
+
+        createUserAndRoles(username, email, password);
+
+        ra.addFlashAttribute("registrationSuccessful", true);
+        return new ModelAndView("redirect:/login");
+    }
+
+    private void createUserAndRoles(String username, String email, String password) throws Exception {
 
         User user = new User();
         user.setUsername(username);
@@ -50,11 +59,7 @@ public class RegistrationController {
         role.setName("ROLE_USER");
         Set<UserRole> userRoles = new HashSet<>();
         userRoles.add(new UserRole(user, role));
-        userService.createUser(user, userRoles);
 
-        ModelAndView loginPage = new ModelAndView("login");
-        loginPage.addObject("registrationSuccessful", true);
-
-        return loginPage;
+        userService.saveUserAndRolesAndCart(user, userRoles);
     }
 }

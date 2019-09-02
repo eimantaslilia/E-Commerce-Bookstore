@@ -18,7 +18,7 @@
             <h2 style="text-align:center"><strong>Most Popular</strong></h2>
             <hr>
             <div class="card-deck">
-                <div th:each="book : ${bookPage}">
+                <div th:each="book : ${bookList}">
 
                     <div class="card mainPageCard border-light" style="width:195px; height:auto; border:none;">
                         <a th:href="@{/books/bookInfo(bookId=${book.id})}"> <img style="height:300px;"
@@ -36,10 +36,10 @@
             </div>
 
                 <ul class="pagination justify-content-center">
-                    <div th:if="${bookPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
+                    <div th:if="${bookList.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
                         <li th:class="page-item">
-                            <a th:href="@{/(size=${bookPage.size}, page=${pageNumber})}" th:text="${pageNumber}"
-                               class="${pageNumber==bookPage.number + 1} page-link"
+                            <a th:href="@{/(size=${bookList.size}, page=${pageNumber})}" th:text="${pageNumber}"
+                               class="${pageNumber==bookList.number + 1} page-link"
                                style="font-size:18px;font-weight:bold; margin-right:10px;"></a>
                         </li>
                     </div>

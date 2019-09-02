@@ -3,20 +3,15 @@ package com.project.bookstore.controller;
 import com.project.bookstore.domain.*;
 import com.project.bookstore.service.BasketService;
 import com.project.bookstore.service.OrderService;
-import com.project.bookstore.service.PaymentService;
 import com.project.bookstore.service.UserService;
-import com.project.bookstore.utility.MailConstructor;
+import com.project.bookstore.utility.CartStats;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
-import javax.persistence.Column;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,13 +30,14 @@ public class OrderController {
     private BasketService basketService;
 
     @Autowired
-    private PaymentService paymentService;
+    private CartStats cartStats;
 
 
     @GetMapping("/createOrder")
     public ModelAndView createOrder(Principal principal, ModelMap model, RedirectAttributes ra) {
 
         User user = userService.findByUsername(principal.getName());
+        List<BasketItem> basketItemList = cartStats.basketItemList(user);
 
         if (user.getAddressList().isEmpty()) {
             model.addAttribute("noAddress", true);
@@ -55,15 +51,33 @@ public class OrderController {
             return new ModelAndView("forward:/checkout", model);
         }
 
-        List<BasketItem> basketItemList = basketService.findByShoppingCart(user.getShoppingCart());
-
         if (basketItemList.isEmpty()) {
             ra.addFlashAttribute("emptyOrderList", true);
             return new ModelAndView("redirect:/basket/items");
         }
 
+        OrderAddress orderAddress = createOrderAddressFromDefaultAddress(user);
+        OrderPayment orderPayment = createOrderPaymentFromDefaultPayment(user);
+
+        ModelAndView mav = new ModelAndView("afterOrdering");
+        mav.addObject("itemList", basketItemList);
+        mav.addObject("address", orderAddress);
+        mav.addObject("payment", orderPayment);
+        mav.addObject("today", LocalDate.now());
+        mav.addObject("totalPrice", cartStats.totalPrice(user));
+        mav.addObject("last4Digits", last4DigitsOfCardNumber(orderPayment.getCardNumber()));
+
+        orderService.createOrder(user, basketItemList, orderAddress, orderPayment);
+        basketService.clearShoppingCart(user.getShoppingCart());
+
+        return mav;
+    }
+
+    private OrderAddress createOrderAddressFromDefaultAddress(User user) {
+
         List<Address> addressList = user.getAddressList();
         OrderAddress orderAddress = new OrderAddress();
+
         for (Address address : addressList) {
             if (address.isDefaultAddress()) {
                 orderAddress.setFullName(address.getFullName());
@@ -72,9 +86,12 @@ public class OrderController {
                 orderAddress.setPostCode(address.getPostCode());
                 orderAddress.setStreetAddress1(address.getStreetAddress1());
                 orderAddress.setCity(address.getCity());
-
             }
         }
+        return orderAddress;
+    }
+
+    private OrderPayment createOrderPaymentFromDefaultPayment(User user) {
 
         List<Payment> paymentList = user.getPaymentList();
         OrderPayment orderPayment = new OrderPayment();
@@ -87,27 +104,16 @@ public class OrderController {
                 orderPayment.setCvc(payment.getCvc());
             }
         }
+        return orderPayment;
+    }
 
-        double totalPrice = 0;
+    public String last4DigitsOfCardNumber(String cardNumber) {
 
-        for (BasketItem item : basketItemList) {
-            totalPrice += item.getBook().getOurPrice() * item.getQty();
+        String last4Digits = "";
+
+        for (int i = 1; i < 5; i++) {
+            last4Digits += cardNumber.charAt(cardNumber.length() - i);
         }
-
-        ModelAndView mav = new ModelAndView("afterOrdering");
-        mav.addObject("itemList", basketItemList);
-        mav.addObject("address", orderAddress);
-        mav.addObject("payment", orderPayment);
-        mav.addObject("today", LocalDate.now());
-        mav.addObject("totalPrice", totalPrice);
-
-
-        String lastCharacters = paymentService.last4OfCardNumber(orderPayment.getCardNumber());
-        mav.addObject("lastCharacters", lastCharacters);
-
-        orderService.createOrder(user, basketItemList, orderAddress, orderPayment);
-        basketService.clearShoppingCart(user.getShoppingCart());
-
-        return mav;
+        return last4Digits;
     }
 }

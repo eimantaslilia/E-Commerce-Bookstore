@@ -16,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -39,14 +42,6 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAllByOrderByIdDesc();
-    }
-
-    public Page<Book> findAllByPage(Pageable pageable) {
-        return bookRepository.findAllByOrderByIdDesc(pageable);
-    }
-
     public Book getOne(Long id) {
         return bookRepository.getOne(id);
     }
@@ -56,23 +51,35 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    public void deleteImageFromS3(Long id) {
-        Book book = getOne(id);
-        String bookName = book.getId() + ".jpg";
-
-        s3Client.deleteObject(bucketName, bookName);
+    public List<Book> findAll() {
+        return bookRepository.findAllByOrderByIdDesc();
     }
 
-    public List<Book> blurrySearch(String title) {
-        return bookRepository.findByTitleContaining(title);
-    }
-
-    public List<Book> findByAuthor(String title) {
-        return bookRepository.findByAuthorContaining(title);
+    public Page<Book> findAllByPage(Pageable pageable) {
+        return bookRepository.findAllByOrderByIdDesc(pageable);
     }
 
     public List<Book> findByGenre(String category) {
-        return bookRepository.findByGenre(category);
+        List<Book> booksByGenre = bookRepository.findByGenre(category);
+        booksByGenre.sort(Comparator.comparing(Book::getId));
+        Collections.reverse(booksByGenre);
+        return booksByGenre;
+    }
+
+    public List<Book> bookSearchByTitleAndAuthor(String keyword) {
+
+        List<Book> allBooks = new ArrayList<>();
+
+        List<Book> titleBooks = bookRepository.findByTitleContaining(keyword);
+        for (Book titleBook : titleBooks) {
+            allBooks.add(titleBook);
+        }
+
+        List<Book> authorBooks = bookRepository.findByAuthorContaining(keyword);
+        for (Book authorBook : authorBooks) {
+            allBooks.add(authorBook);
+        }
+        return allBooks;
     }
 
     public void uploadBookImage(Book book) throws IOException {
@@ -101,5 +108,12 @@ public class BookServiceImpl implements BookService {
         fileOutputStream.write(file.getBytes());
         fileOutputStream.close();
         return convertedFile;
+    }
+
+    public void deleteImageFromS3(Long id) {
+        Book book = getOne(id);
+        String bookName = book.getId() + ".jpg";
+
+        s3Client.deleteObject(bucketName, bookName);
     }
 }

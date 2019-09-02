@@ -19,10 +19,10 @@
                     <br>
 
                     <p th:if="${emailExists}" style="color:firebrick; font-size:14px;text-align:center;">Email already
-                        exists.</p>
+                        exists</p>
 
                     <p th:if="${usernameExists}" style="color:firebrick; font-size:14px; text-align:center;">Username
-                        already exists.</p>
+                        already exists</p>
 
                     <form class="form-signin" th:action="@{/registration}" method="post">
                         <div class="form-label-group">

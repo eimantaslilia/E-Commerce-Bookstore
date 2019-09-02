@@ -62,12 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http
-                .authorizeRequests()
-                .antMatchers(PUBLIC_MATCHERS)
-                .permitAll();
-        http
-                .csrf().disable().cors().disable()
+                .csrf().disable()
                 .formLogin().failureUrl("/login?error")
                 .defaultSuccessUrl("/")
                 .loginPage("/login").permitAll()
@@ -78,12 +75,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe();
         http
                 .authorizeRequests()
-                .antMatchers("/admin/**")
-                .hasRole("ADMIN");
+                .antMatchers(PUBLIC_MATCHERS)
+                .permitAll();
         http
                 .authorizeRequests()
                 .antMatchers(USER_MATCHERS)
                 .hasRole("USER");
+        http
+                .authorizeRequests()
+                .antMatchers("/admin/**")
+                .hasRole("ADMIN");
         http
                 .authorizeRequests()
                 .antMatchers("/saveNewPassword*")
