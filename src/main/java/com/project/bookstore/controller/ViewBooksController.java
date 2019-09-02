@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @RestController
-public class HomeBrowseController {
+public class ViewBooksController {
 
     @Autowired
     private BookService bookService;
@@ -29,11 +28,7 @@ public class HomeBrowseController {
 
         ModelAndView mav = new ModelAndView("browse");
 
-        List<Book> allBooks = bookService.findAll();
-
-        allBooks.sort(Comparator.comparing(Book::getId));
-        Collections.reverse(allBooks);
-        mav.addObject("allBooks", allBooks);
+        mav.addObject("allBooks", bookService.findAll());
         mav.addObject("classActiveBrowse", "active");
         mav.addObject("activeAll", true);
 
@@ -44,26 +39,45 @@ public class HomeBrowseController {
     public ModelAndView paginatedHome(@RequestParam("page") Optional<Integer> page,
                                       @RequestParam("size") Optional<Integer> size) {
 
-
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(20);
-
-        Page<Book> bookPage = bookService.findAllByPage(PageRequest.of(currentPage - 1, pageSize));
+        Page<Book> bookList = bookService.findAllByPage(PageRequest.of(currentPage - 1, pageSize));
 
         ModelAndView mav = new ModelAndView("pagedHome");
-        mav.addObject("bookPage", bookPage);
-
-        int totalPages = bookPage.getTotalPages();
-
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed().collect(Collectors.toList());
-            mav.addObject("pageNumbers", pageNumbers);
-        }
-
         mav.addObject("classActiveHome", "active");
+        mav.addObject("bookList", bookList);
+
+        if (bookList.getTotalPages() > 0) {
+            mav.addObject("pageNumbers", addPagination(bookList.getTotalPages()));
+        }
         return mav;
     }
 
+    private List<Integer> addPagination(int totalPages) {
+        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed().collect(Collectors.toList());
+        return pageNumbers;
+    }
+
+
+    @GetMapping("/books/bookInfo")
+    public ModelAndView bookInfo(@RequestParam("bookId") Long id) {
+
+        Book book = bookService.getOne(id);
+
+        ModelAndView mav = new ModelAndView("bookInfoUser");
+        mav.addObject("book", book);
+
+        List<Integer> qtyList = new ArrayList<>();
+        int qty = book.getStock();
+        for (int i = 1; i <= qty; i++) {
+            qtyList.add(i);
+        }
+
+        mav.addObject("qtyList", qtyList);
+        mav.addObject("qty", 1);
+
+        return mav;
+    }
 
 }

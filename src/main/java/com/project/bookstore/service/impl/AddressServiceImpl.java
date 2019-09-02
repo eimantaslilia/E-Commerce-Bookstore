@@ -16,22 +16,38 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
     private AddressRepository addressRepository;
 
+
     @Override
-    public void addNewAddress(User user, Address address) {
-
-        address.setUser(user);
-
-        if (user.getAddressList().isEmpty()) {
-            address.setDefaultAddress(true);
-        }
-
-        user.getAddressList().add(address);
+    public void save(Address address) {
         addressRepository.save(address);
+    }
+
+    @Override
+    public Address getOne(Long id) {
+        return addressRepository.getOne(id);
     }
 
     @Override
     public void deleteById(Long id) {
         addressRepository.deleteById(id);
+    }
+
+    @Override
+    public void addNewAddress(User user, Address address) {
+
+        address.setUser(user);
+
+        setToDefaultIfFirstAddress(user, address);
+
+        user.getAddressList().add(address);
+        addressRepository.save(address);
+    }
+
+    private void setToDefaultIfFirstAddress(User user, Address address) {
+
+        if (user.getAddressList().isEmpty()) {
+            address.setDefaultAddress(true);
+        }
     }
 
     @Override
@@ -49,13 +65,5 @@ public class AddressServiceImpl implements AddressService {
         }
     }
 
-    @Override
-    public void save(Address address) {
-        addressRepository.save(address);
-    }
 
-    @Override
-    public Address getOne(Long id) {
-        return addressRepository.getOne(id);
-    }
 }

@@ -70,8 +70,7 @@
                                 <br>
                                 <br>
                                 <br>
-                                <!--                                <a th:href="@{/basket/delete(basketItemId=${basketItem.id})}">Remove</a>-->
-                                <a th:href="@{/basket/delete(basketItemId=${basketItem.id})}"
+                                <a th:href="@{/basket/delete(basketItemId=${basketItem.id},checkout=false)}"
                                    onclick="if(!(confirm('Are you sure?'))) return false"
                                    class="btn btn-outline-danger btn-sm" style="font-size:10px;">Remove</a>
                             </div>

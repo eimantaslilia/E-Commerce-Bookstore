@@ -19,16 +19,37 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private UserRepository userRepository;
 
+
+    @Override
+    public Payment getOne(Long id) {
+        return paymentRepository.getOne(id);
+    }
+
+    @Override
+    public void save(Payment payment) {
+        paymentRepository.save(payment);
+    }
+
+    @Override
+    public void deleteById(Long paymentId) {
+        paymentRepository.deleteById(paymentId);
+    }
+
     @Override
     public void addNewCreditCard(User user, Payment payment) {
 
         payment.setUser(user);
-        if (user.getPaymentList().isEmpty()) {
-            payment.setDefaultCard(true);
-        }
+
+        setToDefaultIfFirstAddress(user, payment);
 
         user.getPaymentList().add(payment);
         userRepository.save(user);
+    }
+
+    private void setToDefaultIfFirstAddress(User user, Payment payment) {
+        if (user.getPaymentList().isEmpty()) {
+            payment.setDefaultCard(true);
+        }
     }
 
     @Override
@@ -46,27 +67,5 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    @Override
-    public void deleteById(Long paymentId) {
-        paymentRepository.deleteById(paymentId);
-    }
 
-    @Override
-    public Payment getOne(Long id) {
-        return paymentRepository.getOne(id);
-    }
-
-    @Override
-    public void save(Payment payment) {
-        paymentRepository.save(payment);
-    }
-
-    public String last4OfCardNumber(String cardNumber) {
-        String lastCharacters = "";
-        char one = cardNumber.charAt(cardNumber.length() - 1);
-        char two = cardNumber.charAt(cardNumber.length() - 2);
-        char three = cardNumber.charAt(cardNumber.length() - 3);
-        char four = cardNumber.charAt(cardNumber.length() - 4);
-        return lastCharacters + one + two + three + four;
-    }
 }

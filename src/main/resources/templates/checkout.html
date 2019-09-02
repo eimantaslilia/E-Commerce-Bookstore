@@ -210,7 +210,7 @@
                                                     <br>
                                                     <br>
                                                     <br>
-                                                    <a th:href="@{/basket/deleteFromCheckout(basketItemId=${basketItem.id})}"
+                                                    <a th:href="@{/basket/delete(basketItemId=${basketItem.id},checkout=true)}"
                                                        onclick="if(!(confirm('Are you sure?'))) return false"
                                                        class="btn btn-outline-danger btn-sm" style="font-size:10px;">Remove</a>
                                                 </div>
@@ -224,7 +224,7 @@
                                     <div class="row">
                                         <div class="col-xl-5">
                                             <strong style="color:green;">Estimated delivery date: <span
-                                                    th:text="${#temporals.format(localDateTime, 'dd-MM-yyyy')}"></span></strong>
+                                                    th:text="${#temporals.format(estimatedDeliveryDate, 'dd-MM-yyyy')}"></span></strong>
                                         </div>
                                         <div class="col-xl-3 ">
                                             <div><strong>

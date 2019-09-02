@@ -6,6 +6,7 @@ import com.project.bookstore.service.PaymentService;
 import com.project.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -23,85 +24,92 @@ public class PaymentController {
 
 
     @PostMapping("/addNewCreditCard")
-    public RedirectView addNewCreditCardPost(@ModelAttribute("payment") Payment payment, Principal principal, RedirectAttributes ra) {
+    public ModelAndView addNewCreditCardPost(@ModelAttribute("payment") Payment payment, Principal principal, RedirectAttributes ra) {
 
         User user = userService.findByUsername(principal.getName());
 
-        RedirectView rv = new RedirectView("/account");
+        if (creditCardAlreadyExists(user, payment)) {
+            ra.addFlashAttribute("creditNumberExists", "Payment option with this credit card number already exists");
+        } else {
+            paymentService.addNewCreditCard(user, payment);
+        }
+
         ra.addFlashAttribute("paymentTabOpen", true);
+        return new ModelAndView("redirect:/account");
+    }
+
+    private boolean creditCardAlreadyExists(User user, Payment payment) {
 
         List<Payment> userPaymentList = user.getPaymentList();
         for (Payment card : userPaymentList) {
             if (payment.getCardNumber().equals(card.getCardNumber())) {
-                ra.addFlashAttribute("creditNumberExists", "Payment with this credit card number already exists");
-                return rv;
+                return true;
             }
         }
-
-        paymentService.addNewCreditCard(user, payment);
-
-        return rv;
+        return false;
     }
 
     @GetMapping("/setAsDefaultPayment")
-    public RedirectView setAsDefaultPayment(@ModelAttribute("paymentId") Long paymentId, @RequestParam("checkout") boolean checkout, Principal principal, RedirectAttributes ra) {
+    public ModelAndView setAsDefaultPayment(@ModelAttribute("paymentId") Long paymentId, @RequestParam("checkout") boolean backToCheckout, Principal principal, RedirectAttributes ra) {
 
         User user = userService.findByUsername(principal.getName());
         paymentService.setAsDefaultPayment(user, paymentId);
 
-        if (checkout) {
-            RedirectView checkoutPage = new RedirectView("/checkout");
+        if (backToCheckout) {
             ra.addFlashAttribute("checkoutPaymentChanged", true);
-            return checkoutPage;
+            return new ModelAndView("redirect:/checkout");
         }
 
-        RedirectView profilePage = new RedirectView("/account");
         ra.addFlashAttribute("defaultPaymentChanged", "Your default payment has been updated");
-
         ra.addFlashAttribute("paymentTabOpen", true);
-        return profilePage;
+        return new ModelAndView("redirect:/account");
     }
 
     @GetMapping("/removeCreditCard")
-    public RedirectView removeCreditCard(@RequestParam("id") Long paymentId, @RequestParam("checkout") boolean checkout, Principal principal, RedirectAttributes ra) {
+    public ModelAndView removeCreditCard(@RequestParam("id") Long paymentId, @RequestParam("checkout") boolean backToCheckout, Principal principal, RedirectAttributes ra) {
 
         User user = userService.findByUsername(principal.getName());
 
         Payment paymentToDelete = paymentService.getOne(paymentId);
 
-        boolean defaultPayment = paymentToDelete.isDefaultCard();
+        boolean paymentWasDefault = paymentToDelete.isDefaultCard();
 
         paymentService.deleteById(paymentId);
 
+        if (paymentWasDefault) {
+            setNewDefaultPaymentAfterRemoval(user);
+        }
+        if (backToCheckout) {
+            ra.addFlashAttribute("checkoutPaymentChanged", true);
+            return new ModelAndView("redirect:/checkout");
+        }
+        ra.addFlashAttribute("paymentTabOpen", true);
+        return new ModelAndView("redirect:/account");
+    }
+
+    private void setNewDefaultPaymentAfterRemoval(User user) {
+
         List<Payment> userPaymentList = user.getPaymentList();
 
-        if (defaultPayment & !userPaymentList.isEmpty()) {
+        if (!userPaymentList.isEmpty()) {
             userPaymentList.get(0).setDefaultCard(true);
         }
         for (Payment payment : userPaymentList) {
             paymentService.save(payment);
         }
-        if (checkout) {
-            RedirectView checkoutPage = new RedirectView("checkout");
-            ra.addFlashAttribute("checkoutPaymentChanged", true);
-            return checkoutPage;
-        }
-
-        RedirectView profilePage = new RedirectView("/account");
-        ra.addFlashAttribute("paymentTabOpen", true);
-        return profilePage;
     }
 
     @GetMapping("/paymentFromCheckout")
-    public RedirectView paymentTabFromCheckout(RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/account");
+    public RedirectView paymentMethodsInAccount(RedirectAttributes ra) {
+
         ra.addFlashAttribute("paymentTabOpen", true);
-        return rv;
+        return new RedirectView("/account");
     }
+
     @GetMapping("/checkoutPaymentFromAccount")
-    public RedirectView checkoutPaymentFromAccount(RedirectAttributes ra) {
-        RedirectView rv = new RedirectView("/checkout");
+    public RedirectView linkToCheckoutFromPaymentMethodsInAccount(RedirectAttributes ra) {
+
         ra.addFlashAttribute("checkoutPaymentChanged", true);
-        return rv;
+        return new RedirectView("/checkout");
     }
 }
