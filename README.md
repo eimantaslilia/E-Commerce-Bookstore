@@ -11,7 +11,6 @@ Feel free to register to the [site](http://bookstore-eimantas.eu-west-2.elasticb
 * Maven
 * Hibernate
 * MySQL
-* Thymeleaf
 * CSS
 * Bootstrap 4
 * Thymeleaf
