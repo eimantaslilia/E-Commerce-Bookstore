@@ -31,7 +31,6 @@ public class AdminBookController {
     public ModelAndView addBookPost(@ModelAttribute("book") Book book, RedirectAttributes ra) throws IOException {
 
         bookService.save(book);
-
         bookService.uploadBookImage(book);
 
         ra.addFlashAttribute("message", "The book has been added successfully");

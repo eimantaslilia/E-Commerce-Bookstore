@@ -110,8 +110,7 @@ public class OrderController {
     public String last4DigitsOfCardNumber(String cardNumber) {
 
         String last4Digits = "";
-
-        for (int i = 1; i < 5; i++) {
+        for (int i = 4; i > 0; i--) {
             last4Digits += cardNumber.charAt(cardNumber.length() - i);
         }
         return last4Digits;
