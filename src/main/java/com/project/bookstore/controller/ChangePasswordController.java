@@ -133,7 +133,7 @@ public class ChangePasswordController {
     private boolean tokenHasExpired(PasswordResetToken passToken) {
 
         Calendar cal = Calendar.getInstance();
-        if ((passToken.getExpiryDate().getTime() - cal.getTime().getTime() <= 0)) {
+        if (passToken.getExpiryDate().getTime() - cal.getTime().getTime() <= 0) {
             return true;
         }
         return false;

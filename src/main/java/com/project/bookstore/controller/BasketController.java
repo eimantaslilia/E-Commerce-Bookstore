@@ -1,8 +1,6 @@
 package com.project.bookstore.controller;
 
-import com.project.bookstore.domain.BasketItem;
 import com.project.bookstore.domain.Book;
-import com.project.bookstore.domain.ShoppingCart;
 import com.project.bookstore.domain.User;
 import com.project.bookstore.service.BasketService;
 import com.project.bookstore.service.BookService;
@@ -14,8 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-
-import java.util.List;
 
 
 @RestController

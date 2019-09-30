@@ -17,8 +17,10 @@ public class SignInRegisterController {
 
     @GetMapping("/signup")
     public ModelAndView signup(Model model) {
+
         model.addAttribute("classActiveLogin", "active");
         return new ModelAndView("signup");
+
     }
     @GetMapping("/deliveryInfo")
     public ModelAndView deliveryInfo() {

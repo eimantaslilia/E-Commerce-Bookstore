@@ -52,7 +52,8 @@ public class AddressController {
 
 
     @GetMapping("/removeAddress")
-    public ModelAndView removeAddress(@RequestParam("id") Long addressId, @RequestParam("checkout") boolean backToCheckout, Principal principal, RedirectAttributes ra) {
+    public ModelAndView removeAddress(@RequestParam("id") Long addressId, @RequestParam("checkout") boolean backToCheckout,
+                                      Principal principal, RedirectAttributes ra) {
 
         User user = userService.findByUsername(principal.getName());
 
